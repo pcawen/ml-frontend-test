@@ -11,9 +11,7 @@ const store = configureStore(state);
 
 hydrate(
   <Provider store={store}>
-    <div>
-      <App />
-    </div>
+    <App />
   </Provider>,
   document.querySelector('#app')
 );

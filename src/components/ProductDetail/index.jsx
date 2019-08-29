@@ -16,11 +16,13 @@ class ProductDetail extends Component {
   }
 
   render() {
+    const { item } = this.props;
+
     return (
       <div>
         <div>Product detail</div>
-        <span>{this.props.item.id}</span>
-        <span>{this.props.item.name}</span>
+        <span>{item.id}</span>
+        <span>{item.title}</span>
       </div>
     )
   }

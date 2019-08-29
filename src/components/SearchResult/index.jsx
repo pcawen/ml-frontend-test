@@ -12,39 +12,57 @@ class SearchResult extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.items.data) {
+    console.log('componentDidMount')
+    // if (!this.props.items.data) {
       this._fetchItems();
-    }
+    // }
   }
 
   componentDidUpdate(prevProps) {
+    console.log('componentDidUpdate')
     if (this.props.location.search !== prevProps.location.search) {
       this._fetchItems();
     }
   }
 
   _fetchItems = () => {
+    console.log('_fetchItems')
     const values = queryString.parse(this.props.location.search);
+    console.log('values: ', values);
     this.props.fetchItems(values.search);
   }
 
   render() {
     const { items: { isFetching, data } } = this.props;
+    console.log('Render: ',data);
 
     return (
       <div>
         <div>Search result</div>
-        <ul>
-        {data.map(item => {
+        {<ul>
+        {data.items && data.items.map(item => {
           return (
             <li key={item.id} >
-              <NavLink to={`/items/${item.id}`}>
-                {item.name}
-              </NavLink>
+              <div>
+                <NavLink to={`/items/${item.id}`}>
+                  <div>
+                    <span>{item.title}</span>
+                    <br/>
+                    <span>Price</span>
+                    <span>{item.price.currency}</span>
+                    <span>{item.price.amount}</span>
+                    <span>{item.price.decimals}</span>
+                    <br/>
+                    <span>{item.condition}</span>
+                    <img src={item.picture} alt="product image"/>
+                    <span>Free shipping:{item.free_shipping}</span>
+                  </div>
+                </NavLink>
+              </div>
             </li>
           )
         })}
-        </ul>
+        </ul>}
       </div>
     )
   }

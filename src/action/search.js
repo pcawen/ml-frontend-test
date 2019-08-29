@@ -9,7 +9,7 @@ import {
 } from "./types";
 
 
-export const fetchItems = searchString => async dispatch => {
+export const fetchItems = (searchString = '') => async dispatch => {
   try {
     dispatch({ type: REQUEST_ITEMS });
     const res = await axios.get(`${ROOT}/items?q=${searchString.trim()}`);
