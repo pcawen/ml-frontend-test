@@ -3,6 +3,11 @@ body {
   padding: 0;
 }
 
+.app-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
   width: 100%;
   max-width: 1000px;

@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 
 const CategoryBreadcrumb = ({ item }) => {
   return (
+    { item.id &&
     <div>
       <span>Breadcrumb:</span>
       <span>{item.id}</span>
     </div>
+    }
   )
 }
 

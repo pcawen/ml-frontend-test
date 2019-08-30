@@ -6,7 +6,7 @@ import CategoryBreadcrumb from './CategoryBreadcrumb/CategoryBreadcrumb';
 
 export default () => {
   return (
-    <div>
+    <div className="app-container" >
       <Search />
       <CategoryBreadcrumb />
       {renderRoutes(Routes)}
