@@ -9,7 +9,9 @@ export default () => {
     <div className="app-container" >
       <Search />
       <CategoryBreadcrumb />
-      {renderRoutes(Routes)}
+      <div className="app-content">
+        {renderRoutes(Routes)}
+      </div>
     </div>
   );
 };

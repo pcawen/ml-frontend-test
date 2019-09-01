@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchItems } from '../../action/search';
 import { NavLink } from 'react-router-dom';
+import Price from '../../common/Price';
 
 class SearchResult extends Component {
 
@@ -12,57 +13,49 @@ class SearchResult extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount')
-    // if (!this.props.items.data) {
-      this._fetchItems();
-    // }
+    this._fetchItems();
   }
 
   componentDidUpdate(prevProps) {
-    console.log('componentDidUpdate')
     if (this.props.location.search !== prevProps.location.search) {
       this._fetchItems();
     }
   }
 
   _fetchItems = () => {
-    console.log('_fetchItems')
     const values = queryString.parse(this.props.location.search);
-    console.log('values: ', values);
     this.props.fetchItems(values.search);
   }
 
   render() {
     const { items: { isFetching, data } } = this.props;
-    console.log('Render: ',data);
 
     return (
-      <div>
-        <div>Search result</div>
-        {<ul>
+      <div className="items-container">
+        <ul>
         {data.items && data.items.map(item => {
           return (
             <li key={item.id} >
-              <div>
-                <NavLink to={`/items/${item.id}`}>
-                  <div>
-                    <span>{item.title}</span>
-                    <br/>
-                    <span>Price</span>
-                    <span>{item.price.currency}</span>
-                    <span>{item.price.amount}</span>
-                    <span>{item.price.decimals}</span>
-                    <br/>
-                    <span>{item.condition}</span>
-                    <img src={item.picture} alt="product image"/>
-                    <span>Free shipping:{item.free_shipping}</span>
+              <NavLink className="item" to={`/items/${item.id}`}>
+                <div className="item__picture">
+                  <img src={item.picture} alt="product image"/>
+                </div>
+                <div className="item__data">
+                  <div className="item__data__price">
+                    <Price {...item.price}/>
+                    { item.free_shipping && <img src="../../../img/ic_shipping.png" alt=""/> }
                   </div>
-                </NavLink>
-              </div>
+                  <span>{item.title}</span>
+                  <span>{item.condition}</span>
+                </div>
+                <div className="item__location">
+                  <span>{item.state_name}</span>
+                </div>
+              </NavLink>
             </li>
           )
         })}
-        </ul>}
+        </ul>
       </div>
     )
   }

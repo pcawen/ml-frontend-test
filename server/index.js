@@ -14,15 +14,41 @@ var router = express.Router();
 const ML_API = 'https://api.mercadolibre.com'
 
 router.get('/api/items/:id', async (req, res) => {
-  console.log('>>>Get item by ID');
-  console.log('request path: ', req.path);
-  console.log('Get item by ID: ', req.params);
-  // const response = {name: 'item one', id: 1}
   let data = {}
   try {
     let response = await axios.get(`${ML_API}/items/${req.params.id}`);
-    console.log('>>>get item response: ', response);
-    if (response.status === 200) data = response.data;
+    if (response.status === 200) {
+      let origItem = response.data;
+      data = {
+        'author': {
+          'name': '',
+          'lastname': ''
+        },
+        'item': {
+          'id': origItem.id,
+          'title': origItem.title,
+          'price': {
+            'currency': origItem.currency_id,
+            'amount': Math.floor(origItem.price),
+            'decimals': Math.floor((origItem.price - Math.floor(origItem.price))*100),
+          },
+          'picture': origItem.pictures[0].url,
+          'condition': origItem.condition,
+          'free_shipping': origItem.shipping.free_shipping,
+          'sold_quantity': origItem.sold_quantity,
+          'description': ''
+        }
+      };
+      let cat = await axios.get(`${ML_API}/categories/${origItem.category_id}`);
+      if (cat.status === 200) {
+        data.categories = cat.data.path_from_root;
+      }
+    } 
+    //TODO get description
+    let desc = await axios.get(`${ML_API}/items/${req.params.id.trim()}/description`);
+    if (desc.status === 200) {
+      data.item.description = desc.data.plain_text;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -30,10 +56,6 @@ router.get('/api/items/:id', async (req, res) => {
 });
 
 router.get('/api/items\?*', async (req, res) => {
-  console.log('>>>Search items');
-  console.log('request path: ', req.path);
-  console.log('request query: ', req.query);
-  // const response = [{name: 'item one', id: 1}, {name: 'item two', id: 2}]
   let data = {
     'author': {
       'name': '',
@@ -44,9 +66,9 @@ router.get('/api/items\?*', async (req, res) => {
   };
   try {
     let response = await axios.get(`${ML_API}/sites/MLA/search?q=${req.query.q}`);
-    console.log('>>>search sesponse: ', response);
     if (response.status === 200) {
-      response.data.results.forEach(item => {
+      for (let i = 0; i < 4; i++) {
+        let item = response.data.results[i];
         data.items.push({
           'id': item.id,
           'title': item.title,
@@ -57,25 +79,19 @@ router.get('/api/items\?*', async (req, res) => {
           },
           'picture': item.thumbnail,
           'condition': item.condition,
-          'free_shipping': item.shipping.free_shipping
+          'free_shipping': item.shipping.free_shipping,
+          'state_name': item.address.state_name
         });
-      });
+      }
     }
   } catch (error) {
     console.error(error);
   }
-  console.log('API response: ', data);
   res.send(data);
 });
 
 router.get('*', async (req, res) => {
-  console.log('>>>Static response');
-  console.log('request path: ', req.path);
-  console.log('request params: ', req.params);
-  console.log('request query: ', req.query);
-
   const store = configureStore();
-  console.log('before matchRoutes');
   const actions = matchRoutes(Routes, req.path)
   .map(({ route, match }) => route.component.fetching ? route.component.fetching({...store, params: match.params, query: req.query }) : null)
   .map(async actions => await Promise.all(
@@ -85,9 +101,7 @@ router.get('*', async (req, res) => {
 
   await  Promise.all(actions);
   const context = {};
-  console.log('before rendered content');
   const content = render(req.path, store, context);
-  console.log('rendered content: ', content);
   res.send(content);
 });
 

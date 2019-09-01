@@ -1,16 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+$color-light-grey: #ececec;
+$color-dark-grey: #7b7b7b;
+$color-action-blue: #3483fa;
+$color-ml-yellow: #fff159;
+
 body {
   margin: 0;
   padding: 0;
+  background-color: $color-light-grey;
+  font-family: sans-serif;
+  font-weight: lighter;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
+  background-color: $color-light-grey;
 }
 
-.container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 16px;
+.app-content {
+  margin: 1rem 8rem 3rem 8rem;
+}
+
+sup {
+  vertical-align: text-top;
+  font-size: 75%;
 }
